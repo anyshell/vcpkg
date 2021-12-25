@@ -124,6 +124,22 @@ Halting portfile execution.
         endforeach()
 
         z_vcpkg_prettify_command_line(pretty_command ${arg_COMMAND})
+
+        # --- Try to print error logs
+        # Split the string by newline characters
+        string(REGEX MATCHALL "[^\n]+" file_list ${stringified_logs})
+        # Iterate over the list and print content of each file
+        foreach(file IN LISTS file_list)
+            string(STRIP "${file}" file_stripped)
+            # Print filename
+            message(STATUS "Build Failed. Content of ${file_stripped}:")
+            # Read the content of the file
+            file(READ ${file_stripped} file_content)
+            # Print the content
+            message(STATUS "${file_content}")
+        endforeach()
+        # ---
+
         message(FATAL_ERROR
             "  Command failed: ${pretty_command}\n"
             "  Working Directory: ${arg_WORKING_DIRECTORY}\n"
