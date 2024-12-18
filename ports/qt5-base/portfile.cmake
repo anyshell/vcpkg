@@ -145,15 +145,6 @@ list(APPEND CORE_OPTIONS
     -no-feature-gssapi
     )
 
-if(VCPKG_TARGET_IS_LINUX)
-    # Accessibility uses at-spi2-core which links dbus,
-    # so we link to ensure to use the same dbus library.
-    list(APPEND CORE_OPTIONS -dbus-linked)
-else()
-    # Enable Qt DBus without linking to it.
-    list(APPEND CORE_OPTIONS -dbus-runtime)
-endif()
-
 if(WITH_PGSQL_PLUGIN)
     list(APPEND CORE_OPTIONS -sql-psql)
 else()
@@ -170,6 +161,9 @@ if ("vulkan" IN_LIST FEATURES)
 else()
     list(APPEND CORE_OPTIONS --vulkan=no)
 endif()
+
+# force disable ODBC on all platforms, because of it failing on Linux arm64/armv7a wit cross=compilation at the Qt 5.15.15: /opt/raspios-buster-arm64-rootfs/usr/include/sqltypes.h:52:10: fatal error: unixodbc_conf.h: No such file or directory
+list(APPEND CORE_OPTIONS -no-sql-odbc)
 
 find_library(ZLIB_RELEASE NAMES z zlib PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
 find_library(ZLIB_DEBUG NAMES z zlib zd zlibd PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
