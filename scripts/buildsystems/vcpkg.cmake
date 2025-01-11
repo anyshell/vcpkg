@@ -551,6 +551,17 @@ if(VCPKG_MANIFEST_MODE AND VCPKG_MANIFEST_INSTALL AND NOT Z_VCPKG_CMAKE_IN_TRY_C
             endif()
         else()
             message(STATUS "Running vcpkg install - failed")
+
+            # --- Try to print error log
+            string(STRIP "${Z_NATIVE_VCPKG_MANIFEST_INSTALL_LOGFILE}" file_stripped)
+            # Print filename
+            message(STATUS "Build Failed. Content of ${file_stripped}:")
+            # Read the content of the file
+            file(READ ${file_stripped} file_content)
+            # Print the content
+            message(STATUS "${file_content}")
+            # ---
+
             z_vcpkg_add_fatal_error("vcpkg install failed. See logs for more information: ${Z_NATIVE_VCPKG_MANIFEST_INSTALL_LOGFILE}")
         endif()
     endif()
